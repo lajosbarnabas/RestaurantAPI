@@ -1,5 +1,5 @@
-createRestaurant = (req, res, next) =>{
-    res.json({msg: "Hello"})
-}
+const restaurantModel = require('../models/restaurantModel')
 
-module.exports = createRestaurant
+module.exports = getAllRestaurant = () =>{
+    const ettermek = restaurantModel.find()
+}

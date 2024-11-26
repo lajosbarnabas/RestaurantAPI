@@ -7,5 +7,5 @@ server.use(express.json()) // POST-ban a req.body-ban json mehet át(ez a sor ke
 server.use('/api', routes)
 
 server.listen(3000, () =>{
-    console.log("A szerver elindult.")
+    console.log("A szerver elindult...")
 })
