@@ -5,6 +5,12 @@ const getAllRestaurant = async (req, res, next) =>{
     res.status(200).json(restaurantModel.find())
 }
 
+const createRestaurant = async (req, res) =>{
+    const newRestaurant = await restaurantModel.create(req.body)
+    res.status(200).json(restaurantModel.create())
+}
+
+
 module.exports = {
-    getAllRestaurant
+    getAllRestaurant, createRestaurant
 }
