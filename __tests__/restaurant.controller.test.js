@@ -6,7 +6,10 @@ const newRestaurant = require('./mock-data/newRestaurant.json')
 
 restaurantModel.find = jest.fn()
 restaurantModel.create = jest.fn()
-let req, rest, next
+restaurantModel.findById = jest.fn()
+let req, res, next
+let firstRestaurant
+
 
 beforeEach(() =>{
     req = httpMocks.createRequest()
@@ -14,7 +17,27 @@ beforeEach(() =>{
     next = null
 })
 
-describe('A create metódus tesztelése', ()=>{
+
+describe('A findById végponthoz tartozó metódus tesztelése', () =>{
+    beforeEach(()=>{
+        firstRestaurant = req.body[0]
+    })
+    it('A getRestaurantById függvény létezik', () =>{
+        expect(typeof restaurantController.getRestaurantById).toBe('function')
+    })
+    it('A getRestaurantById függvényben meg kellene hívni a findById() függvényét', async () => {
+        await restaurantController.getRestaurantById(req, res, next)
+        expect(restaurantModel.findById).toHaveBeenCalledWith(firstRestaurant)
+    })
+    it('A függvénynek 200-as hiba kódot kell visszaadnia és egy étteremmel kell visszatérnie', async ()=>{
+        expect(res.statusCode).toBe(200)
+        expect(res.body[0].title).toBeDefined()
+        expect(res.body[0].building).toBeDefined()
+    })
+})
+
+
+describe('A create végponthoz tartozó metódus tesztelése', ()=>{
     beforeEach(() =>{
         req.body = newRestaurant
     })
