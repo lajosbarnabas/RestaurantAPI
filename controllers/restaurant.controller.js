@@ -11,7 +11,7 @@ const createRestaurant = async (req, res) =>{
 }
 
 const getRestaurantById = async (req, res, next) => {
-    const restaurantById = restaurantModel.findById(req.params.restaurant_id)
+    const restaurantById = await restaurantModel.findById(req.params.restaurant_id)
     res.status(200).json(restaurantById)
 }
 

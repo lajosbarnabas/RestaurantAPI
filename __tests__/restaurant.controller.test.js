@@ -14,14 +14,11 @@ let firstRestaurant
 beforeEach(() =>{
     req = httpMocks.createRequest()
     res = httpMocks.createResponse()
-    next = null
+    next = jest.fn()
 })
 
 
 describe('A findById végponthoz tartozó metódus tesztelése', () =>{
-    beforeEach(()=>{
-        firstRestaurant = req.body[0]
-    })
     it('A getRestaurantById függvény létezik', () =>{
         expect(typeof restaurantController.getRestaurantById).toBe('function')
     })
@@ -30,9 +27,13 @@ describe('A findById végponthoz tartozó metódus tesztelése', () =>{
         expect(restaurantModel.findById).toHaveBeenCalledWith(firstRestaurant)
     })
     it('A függvénynek 200-as hiba kódot kell visszaadnia és egy étteremmel kell visszatérnie', async ()=>{
+        req.params.restaurant_id = "30075445";
+        firstRestaurant = req.body;
+        restaurantModel.findById.mockReturnValue(firstRestaurant)
+        await restaurantController.getRestaurantById(req, res, next)
         expect(res.statusCode).toBe(200)
-        expect(res.body[0].title).toBeDefined()
-        expect(res.body[0].building).toBeDefined()
+        expect(res._isEndCalled).toBeTruthy()
+        expect(res._getJSONData()).toStrictEqual(firstRestaurant)
     })
 })
 
