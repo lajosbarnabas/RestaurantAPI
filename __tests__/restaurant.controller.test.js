@@ -19,6 +19,10 @@ beforeEach(() =>{
 })
 
 describe('A delete végponthoz tartozó metódus tesztelése', () => {
+    beforeEach(()=>{
+        req.params.restaurant_id = "30075445";
+        firstRestaurant = req.body;
+    })
     it("A deleteRestaurant függvény létezik", () =>{
         expect(typeof restaurantController.deleteRestaurant).toBe('function')
     })
@@ -27,17 +31,25 @@ describe('A delete végponthoz tartozó metódus tesztelése', () => {
         expect(restaurantModel.findById).toHaveBeenCalled()
     })
     it('A deleteRestaurant függvény JSON adattal tér vissza és 200-as státusz kóddal', async () =>{
-        req.params.restaurant_id = "30075445";
-        firstRestaurant = req.body;
         restaurantModel.findByIdAndDelete.mockReturnValue(firstRestaurant)
         await restaurantController.deleteRestaurant(req, res, next)
         expect(res.statusCode).toBe(200)
         expect(res._isEndCalled).toBeTruthy()
         expect(res._getJSONData()).toStrictEqual(firstRestaurant)
     })
+    it("Ha a függvény nem létezik akkor 404-es hibát kellene kapni", async() =>{
+        restaurantModel.findByIdAndDelete.mockReturnValue(null)
+        await restaurantController.deleteRestaurant(req, res, next)
+        expect(res.statusCode).toBe(404)
+        expect(res._isEndCalled()).toBeTruthy()
+    })
 });
 
 describe('A findById végponthoz tartozó metódus tesztelése', () =>{
+    beforeEach(()=>{
+        req.params.restaurant_id = "30075445";
+        firstRestaurant = req.body;
+    })
     it('A getRestaurantById függvény létezik', () =>{
         expect(typeof restaurantController.getRestaurantById).toBe('function')
     })
@@ -46,13 +58,18 @@ describe('A findById végponthoz tartozó metódus tesztelése', () =>{
         expect(restaurantModel.findById).toHaveBeenCalled()
     })
     it('A getRestaurantById függvénynek 200-as hiba kódot kell visszaadnia és egy JSON fájlal kell visszatérnie', async ()=>{
-        req.params.restaurant_id = "30075445";
-        firstRestaurant = req.body;
+        
         restaurantModel.findById.mockReturnValue(firstRestaurant)
         await restaurantController.getRestaurantById(req, res, next)
         expect(res.statusCode).toBe(200)
         expect(res._isEndCalled).toBeTruthy()
         expect(res._getJSONData()).toStrictEqual(firstRestaurant)
+    })
+    it("Ha a függvény nem létezik akkor 404-es hibát kellene kapni", async() =>{
+        restaurantModel.findById.mockReturnValue(null)
+        await restaurantController.getRestaurantById(req, res, next)
+        expect(res.statusCode).toBe(404)
+        expect(res._isEndCalled()).toBeTruthy()
     })
 })
 
@@ -75,6 +92,12 @@ describe('A create végponthoz tartozó metódus tesztelése', ()=>{
         expect(res._isEndCalled()).toBeTruthy()
         expect(res._getJSONData()).toStrictEqual(newRestaurant)
     })
+    it("Ha a függvény nem létezik akkor 404-es hibát kellene kapni", async() =>{
+        restaurantModel.create.mockReturnValue(null)
+        await restaurantController.createRestaurant(req, res, next)
+        expect(res.statusCode).toBe(404)
+        expect(res._isEndCalled()).toBeTruthy()
+    })
 })
 
 
@@ -92,5 +115,11 @@ describe('A getAll végponthoz tartozó metódus tesztelése', () =>{
         expect(res.statusCode).toBe(200);
         expect(res._isEndCalled()).toBeTruthy()
         expect(res._getJSONData()).toStrictEqual(restaurantList)
+    })
+    it("Ha a függvény nem létezik akkor 404-es hibát kellene kapni", async() =>{
+        restaurantModel.find.mockReturnValue(null)
+        await restaurantController.getAllRestaurant(req, res, next)
+        expect(res.statusCode).toBe(404)
+        expect(res._isEndCalled()).toBeTruthy()
     })
 })
