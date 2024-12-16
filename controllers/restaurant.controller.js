@@ -22,5 +22,5 @@ const deleteRestaurant = async (req, res, next) => {
 
 
 module.exports = {
-    getAllRestaurant, createRestaurant, getRestaurantById
+    getAllRestaurant, createRestaurant, getRestaurantById, deleteRestaurant
 }

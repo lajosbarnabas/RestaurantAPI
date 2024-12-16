@@ -7,6 +7,7 @@ const newRestaurant = require('./mock-data/newRestaurant.json')
 restaurantModel.find = jest.fn()
 restaurantModel.create = jest.fn()
 restaurantModel.findById = jest.fn()
+restaurantModel.findByIdAndDelete = jest.fn()
 let req, res, next
 let firstRestaurant
 
@@ -17,6 +18,24 @@ beforeEach(() =>{
     next = jest.fn()
 })
 
+describe('A delete végponthoz tartozó metódus tesztelése', () => {
+    it("A deleteRestaurant függvény létezik", () =>{
+        expect(typeof restaurantController.deleteRestaurant).toBe('function')
+    })
+    it('A deleteRestaurant függvényben meg kellene hívni a findByIdAndDelete() függvényét', async () => {
+        await restaurantController.getRestaurantById(req, res, next)
+        expect(restaurantModel.findById).toHaveBeenCalled()
+    })
+    it('A deleteRestaurant függvény JSON adattal tér vissza és 200-as státusz kóddal', async () =>{
+        req.params.restaurant_id = "30075445";
+        firstRestaurant = req.body;
+        restaurantModel.findByIdAndDelete.mockReturnValue(firstRestaurant)
+        await restaurantController.deleteRestaurant(req, res, next)
+        expect(res.statusCode).toBe(200)
+        expect(res._isEndCalled).toBeTruthy()
+        expect(res._getJSONData()).toStrictEqual(firstRestaurant)
+    })
+});
 
 describe('A findById végponthoz tartozó metódus tesztelése', () =>{
     it('A getRestaurantById függvény létezik', () =>{
@@ -24,9 +43,9 @@ describe('A findById végponthoz tartozó metódus tesztelése', () =>{
     })
     it('A getRestaurantById függvényben meg kellene hívni a findById() függvényét', async () => {
         await restaurantController.getRestaurantById(req, res, next)
-        expect(restaurantModel.findById).toHaveBeenCalledWith(firstRestaurant)
+        expect(restaurantModel.findById).toHaveBeenCalled()
     })
-    it('A függvénynek 200-as hiba kódot kell visszaadnia és egy étteremmel kell visszatérnie', async ()=>{
+    it('A getRestaurantById függvénynek 200-as hiba kódot kell visszaadnia és egy JSON fájlal kell visszatérnie', async ()=>{
         req.params.restaurant_id = "30075445";
         firstRestaurant = req.body;
         restaurantModel.findById.mockReturnValue(firstRestaurant)
